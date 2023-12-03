@@ -1,0 +1,33 @@
+{
+  "name": "e-commerce-be",
+  "version": "1.0.0",
+  "description": "Backend of an E-commerce store",
+  "main": "index.js",
+  "scripts": {
+    "devstart": "nodemon ./app.js",
+    "serverstart": "set DEBUG=myapp:* & npm run devstart",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/napstar-420/e-commerce-BE.git"
+  },
+  "author": "Zohaib Khan",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/napstar-420/e-commerce-BE/issues"
+  },
+  "homepage": "https://github.com/napstar-420/e-commerce-BE#readme",
+  "dependencies": {
+    "cookie-parser": "^1.4.6",
+    "debug": "^4.3.4",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "express-session": "^1.17.3",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "morgan": "^1.10.0",
+    "nodemon": "^3.0.2"
+  }
+}
