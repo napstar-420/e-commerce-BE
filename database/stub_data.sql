@@ -1,3 +1,6 @@
+-- Use e-commerce DB
+USE e_commerce;
+
 -- Insert dummy data into customers table
 INSERT INTO customers (first_name, last_name, email, phone_number, address, city, state, zip_code, country)
 VALUES
