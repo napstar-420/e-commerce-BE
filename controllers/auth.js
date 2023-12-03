@@ -1,22 +1,23 @@
-/**
- * All the validations are done before @req reaches
- * This part of authentication :)
- */
+require('dotenv').config();
+const jwt = require('jsonwebtoken');
 
 function userSignup(req, res) {
     return res.sendStatus(200);
 }
 
 function userLogin(req, res) {
-    return res.sendStatus(200);
-}
+    // Create and Sign a JWT
+    const payload = { id: req.user_id };
+    const accessToken = jwt.sign(
+        payload,
+        process.env.ACCESS_TOKEN_SECRET,
+        { expiresIn: '8h' },
+    );
 
-function userLogout(req, res) {
-    return res.sendStatus(200);
+    return res.json({ accessToken });
 }
 
 module.exports = {
     userSignup,
-    userLogin,
-    userLogout
+    userLogin
 }

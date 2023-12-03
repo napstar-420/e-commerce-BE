@@ -1,14 +1,13 @@
 const router = require('express').Router();
-const authController = require('../controllers/auth');
 const { userLoginValidations } = require('../validations/user');
+const authController = require('../controllers/auth');
+const verifyJWT = require('../middlewares/verifyJWT');
+const { userLogin, userSignup } = authController;
 
-const { userLogin, userSignup, userLogout } = authController;
-
-// Get Routes
-router.get('/user/logout', userLogout);
-
-// Post Routes
-router.post('/user/signup', userSignup);
 router.post('/user/login', ...userLoginValidations, userLogin);
+
+// Below routes require authentication
+router.use(verifyJWT);
+router.post('/user/signup', userSignup);
 
 module.exports = router;

@@ -55,7 +55,7 @@ const userLoginValidations = [
             }
 
             // Add the User ID so we can use it in the controller
-            req.user_id = user.id;
+            req.user_id = user.user_id;
             return next();
         } catch (error) {
             debug(error);
