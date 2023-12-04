@@ -1,69 +1,91 @@
-const debug = require('debug')('myapp:user_validations');
-const { body, validationResult } = require('express-validator');
+const { body } = require('express-validator');
+const { first } = require('lodash');
 const USERS_REPO = require('../repositories/users');
-const { first, isEmpty } = require('lodash');
+const config = require('../config');
 
 const userLoginValidations = [
-    // Body Validations
     body('email')
         .trim()
         .escape()
         .notEmpty()
-        .withMessage('Email is required')
         .isLength({ min: 1, max: 100 })
-        .withMessage('Email should be less than or equal to 100 characters')
         .isEmail()
-        .withMessage('Email is not valid'),
-
-    body('password')
-        .trim()
-        .escape()
-        .notEmpty()
-        .withMessage('Password is required'),
-
-    // Check if any field is incorrect or missing
-    (req, res, next) => {
-        const errors = validationResult(req);
-
-        if (!errors.isEmpty()) {
-            throw res.status(400).json(errors);
-        }
-
-        return next();
-    },
-
-    // Check if user exists in DB
-    async (req, res, next) => {
-        const { email, password } = req.body;
-        const payload = { email };
-
-        try {
-            const users = await USERS_REPO.isUserExists(payload);
-
-            if (isEmpty(users)) {
-                return res.status(404).json({
-                    message: "User not found"
-                });
-            }
-
-            const user = first(users);
-
-            if (user.password !== password) {
-                return res.status(403).json({
-                    message: "Incorrect Password"
-                });
+        .custom(async (value, { req }) => {
+            const user = first(await USERS_REPO.isUserExists({ email: value }));
+            if (!user) {
+                throw new Error('User not found');
             }
 
             // Add the User ID so we can use it in the controller
             req.user_id = user.user_id;
-            return next();
-        } catch (error) {
-            debug(error);
-            throw res.sendStatus(500).json(error);
-        }
-    }
+            req.user_password = user.password;
+
+            return true;
+        }),
+
+    body('password')
+        .escape()
+        .notEmpty()
+        .custom((value, { req }) => {
+            if (value !== req.user_password) {
+                throw new Error('Incorrect password');
+            }
+
+            return true;
+        }),
+]
+
+const userSignupValidations = [
+    body('full_name')
+        .trim()
+        .escape()
+        .notEmpty()
+        .isLength({ min: 1, max: 100 }),
+
+    body('email')
+        .trim()
+        .escape()
+        .notEmpty()
+        .isLength({ min: 1, max: 100 })
+        .isEmail()
+        .custom(async value => {
+            const user = first(await USERS_REPO.isUserExists({ email: value }));
+
+            if (user) {
+                throw new Error('Email already in use');
+            }
+
+            return true;
+        }),
+
+    body('username')
+        .trim()
+        .escape()
+        .notEmpty()
+        .isLength({ min: 1, max: 100 })
+        .custom(async value => {
+            const user = first(await USERS_REPO.isUserExists({ username: value }));
+
+            if (user) {
+                throw new Error('Username already in use');
+            }
+
+            return true;
+        }),
+
+    body('password')
+        .escape()
+        .notEmpty()
+        .isLength({ min: 1, max: 16 })
+        .custom(value => config.PASSWORD_REGEX.test(value))
+        .withMessage('Password doesn\'t match requirements'),
+
+    body('role')
+        .notEmpty()
+        .isIn(Object.values(config.USER_ROLES))
 ]
 
 module.exports = {
-    userLoginValidations
+    userLoginValidations,
+    userSignupValidations,
 }

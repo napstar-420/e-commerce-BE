@@ -1,4 +1,5 @@
 require('dotenv').config();
+const { validationResult } = require('express-validator');
 const jwt = require('jsonwebtoken');
 
 function userSignup(req, res) {
@@ -6,6 +7,12 @@ function userSignup(req, res) {
 }
 
 function userLogin(req, res) {
+    // Error handling
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        throw res.status(400).json(errors);
+    }
+
     // Create and Sign a JWT
     const payload = { id: req.user_id };
     const accessToken = jwt.sign(
