@@ -4,6 +4,7 @@ const { users } = require('../database/tables');
 
 module.exports = {
     isUserExists,
+    createUser,
 }
 
 async function isUserExists(payload) {
@@ -13,5 +14,14 @@ async function isUserExists(payload) {
     } catch (error) {
         debug(error);
         throw new Error('Error while checking if user exists');
+    }
+}
+
+async function createUser(payload) {
+    try {
+        return await db(users).insert(payload);
+    } catch (error) {
+        debug(error);
+        throw new Error("Error while creating user");
     }
 }

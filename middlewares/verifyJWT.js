@@ -18,7 +18,7 @@ function verifyJWT(req, res, next) {
                 return res.sendStatus(403);
             }
 
-            req.user_id = decoded.id;
+            req.user = { ...decoded };
             return next();
         },
     );

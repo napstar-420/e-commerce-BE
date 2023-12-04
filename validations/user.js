@@ -1,34 +1,63 @@
 const { body } = require('express-validator');
-const { first } = require('lodash');
+const { first, isEmpty } = require('lodash');
+const bcrypt = require('bcryptjs');
 const USERS_REPO = require('../repositories/users');
 const config = require('../config');
+const {
+    EMAIL_IS_REQUIRED,
+    EMAIL_LENGTH_ERROR,
+    USER_NOT_FOUND,
+    PASSWORD_IS_REQUIRED,
+    INCORRECT_PASSWORD,
+    INVALID_EMAIL,
+    NAME_IS_REQUIRED,
+    NAME_LENGTH_ERROR,
+    EMAIL_OCCUPIED,
+    USERNAME_IS_REQUIRED,
+    USERNAME_LENGTH_ERROR,
+    USERNAME_OCCUPIED,
+    INVALID_PASSWORD,
+    INVALID_ROLE
+} = require('../lib/responses');
 
 const userLoginValidations = [
     body('email')
         .trim()
         .escape()
         .notEmpty()
+        .withMessage(EMAIL_IS_REQUIRED)
         .isLength({ min: 1, max: 100 })
+        .withMessage(EMAIL_LENGTH_ERROR)
         .isEmail()
+        .withMessage(INVALID_EMAIL)
         .custom(async (value, { req }) => {
             const user = first(await USERS_REPO.isUserExists({ email: value }));
+
             if (!user) {
-                throw new Error('User not found');
+                throw new Error(USER_NOT_FOUND);
             }
 
-            // Add the User ID so we can use it in the controller
-            req.user_id = user.user_id;
-            req.user_password = user.password;
-
+            // Add the User Data so we can use it later
+            req.user = { ...user }
             return true;
         }),
 
     body('password')
         .escape()
         .notEmpty()
-        .custom((value, { req }) => {
-            if (value !== req.user_password) {
-                throw new Error('Incorrect password');
+        .withMessage(PASSWORD_IS_REQUIRED)
+        .custom(async (value, { req }) => {
+            /**
+             * When account is not found
+             */
+            if (isEmpty(req.user)) {
+                throw new Error(INCORRECT_PASSWORD);
+            }
+
+            const match_result = await bcrypt.compare(value, req.user.password); 
+
+            if (!match_result) {
+                throw new Error(INCORRECT_PASSWORD);
             }
 
             return true;
@@ -40,19 +69,24 @@ const userSignupValidations = [
         .trim()
         .escape()
         .notEmpty()
-        .isLength({ min: 1, max: 100 }),
+        .withMessage(NAME_IS_REQUIRED)
+        .isLength({ min: 1, max: 100 })
+        .withMessage(NAME_LENGTH_ERROR),
 
     body('email')
         .trim()
         .escape()
         .notEmpty()
+        .withMessage(EMAIL_IS_REQUIRED)
         .isLength({ min: 1, max: 100 })
+        .withMessage(EMAIL_LENGTH_ERROR)
         .isEmail()
+        .withMessage(INVALID_EMAIL)
         .custom(async value => {
             const user = first(await USERS_REPO.isUserExists({ email: value }));
 
             if (user) {
-                throw new Error('Email already in use');
+                throw new Error(EMAIL_OCCUPIED);
             }
 
             return true;
@@ -62,12 +96,14 @@ const userSignupValidations = [
         .trim()
         .escape()
         .notEmpty()
+        .withMessage(USERNAME_IS_REQUIRED)
         .isLength({ min: 1, max: 100 })
+        .withMessage(USERNAME_LENGTH_ERROR)
         .custom(async value => {
             const user = first(await USERS_REPO.isUserExists({ username: value }));
 
             if (user) {
-                throw new Error('Username already in use');
+                throw new Error(USERNAME_OCCUPIED);
             }
 
             return true;
@@ -76,13 +112,16 @@ const userSignupValidations = [
     body('password')
         .escape()
         .notEmpty()
+        .withMessage(PASSWORD_IS_REQUIRED)
         .isLength({ min: 1, max: 16 })
+        .withMessage(INVALID_PASSWORD)
         .custom(value => config.PASSWORD_REGEX.test(value))
-        .withMessage('Password doesn\'t match requirements'),
+        .withMessage(INVALID_PASSWORD),
 
     body('role')
-        .notEmpty()
+        .optional()
         .isIn(Object.values(config.USER_ROLES))
+        .withMessage(INVALID_ROLE),
 ]
 
 module.exports = {
