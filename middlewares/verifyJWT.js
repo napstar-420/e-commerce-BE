@@ -1,5 +1,7 @@
 require('dotenv').config();
 const jwt = require('jsonwebtoken');
+const config = require('../config');
+const { SERVER_STATUSES } = config;
 
 function verifyJWT(req, res, next) {
     const authHeader = req.headers.authorization;
@@ -15,7 +17,7 @@ function verifyJWT(req, res, next) {
         process.env.ACCESS_TOKEN_SECRET,
         (err, decoded) => {
             if (err) {
-                return res.sendStatus(403);
+                return res.sendStatus(SERVER_STATUSES.FORBIDDEN);
             }
 
             req.user = { ...decoded };

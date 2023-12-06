@@ -3,11 +3,11 @@ const db = require('../database');
 const { users } = require('../database/tables');
 
 module.exports = {
-    isUserExists,
+    getUser,
     createUser,
 }
 
-async function isUserExists(payload) {
+async function getUser(payload) {
     try {
         return await db(users).where(payload).select();
 

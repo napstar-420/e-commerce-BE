@@ -3,6 +3,9 @@ const debug = require('debug')('myapp:auth_controller');
 const { validationResult } = require('express-validator');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+const config = require('../config');
+const { USER_CREATED } = require('../lib/responses');
+const { SERVER_STATUSES } = config;
 
 async function userSignup(req, res) {
     // Error handling
@@ -35,11 +38,10 @@ async function userSignup(req, res) {
 
         // Save user in DB
         await USER_REPO.createUser(payload);
-
-        return res.sendStatus(200);
+        return res.JSON({ MESSAGE: USER_CREATED });
     } catch (error) {
         debug(error);
-        return res.sendStatus(500);
+        return res.sendStatus(SERVER_STATUSES.SERVER_ERROR);
     }
 }
 
@@ -47,7 +49,7 @@ function userLogin(req, res) {
     // Error handling
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.status(400).json(errors);
+        return res.status(SERVER_STATUSES.BAD_REQUEST).json(errors);
     }
 
     // Create and Sign a JWT

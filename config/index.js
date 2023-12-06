@@ -9,5 +9,13 @@ module.exports = {
     USER_ROLES: {
         EMPLOYEE: 'employee',
         ADMIN: 'admin',
+    },
+
+    SERVER_STATUSES: {
+        OK: 200,
+        SERVER_ERROR: 500,
+        NOT_FOUND: 404,
+        FORBIDDEN: 403,
+        BAD_REQUEST: 400,
     }
 }
