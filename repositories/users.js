@@ -10,8 +10,8 @@ module.exports = {
 
 async function getUser(condition) {
     try {
-        const users = await db(users).where(condition).select();
-        return first(users);
+        const data = await db(users).where(condition).select();
+        return first(data);
     } catch (error) {
         debug(error);
         throw new Error('Error while checking if user exists');
