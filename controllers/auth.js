@@ -38,7 +38,7 @@ async function userSignup(req, res) {
 
         // Save user in DB
         await USER_REPO.createUser(payload);
-        return res.JSON({ MESSAGE: USER_CREATED });
+        return res.JSON({ message: USER_CREATED });
     } catch (error) {
         debug(error);
         return res.sendStatus(SERVER_STATUSES.SERVER_ERROR);

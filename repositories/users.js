@@ -1,16 +1,17 @@
 const debug = require('debug')('myapp:user_repo');
-const db = require('../database');
+const { first } = require('lodash');
 const { users } = require('../database/tables');
+const db = require('../database');
 
 module.exports = {
     getUser,
     createUser,
 }
 
-async function getUser(payload) {
+async function getUser(condition) {
     try {
-        return await db(users).where(payload).select();
-
+        const users = await db(users).where(condition).select();
+        return first(users);
     } catch (error) {
         debug(error);
         throw new Error('Error while checking if user exists');

@@ -5,7 +5,7 @@ function verifyAdmin(req, res, next) {
     const { user } = req;
 
     if (user.role !== USER_ROLES.ADMIN) {
-        return res.sendStatus(SERVER_STATUSES.FORBIDDEN);
+        return res.sendStatus(SERVER_STATUSES.UNAUTHORIZED);
     }
 
     return next();

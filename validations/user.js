@@ -31,7 +31,7 @@ const userLoginValidations = [
         .isEmail()
         .withMessage(INVALID_EMAIL)
         .custom(async (value, { req }) => {
-            const user = first(await USERS_REPO.getUser({ email: value }));
+            const user = await USERS_REPO.getUser({ email: value });
 
             if (!user) {
                 throw new Error(USER_NOT_FOUND);
@@ -100,7 +100,7 @@ const userSignupValidations = [
         .isLength({ min: 1, max: 100 })
         .withMessage(USERNAME_LENGTH_ERROR)
         .custom(async value => {
-            const user = first(await USERS_REPO.getUser({ username: value }));
+            const user = await USERS_REPO.getUser({ username: value });
 
             if (user) {
                 throw new Error(USERNAME_OCCUPIED);

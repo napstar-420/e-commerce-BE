@@ -4,6 +4,7 @@ const debug = require('debug')('myapp:brands_controller');
 const config = require('../config');
 const {
     BRAND_CREATED,
+    BRAND_NOT_FOUND,
 } = require('../lib/responses');
 
 const { SERVER_STATUSES } = config;
@@ -15,13 +16,22 @@ module.exports = {
     deleteBrand
 }
 
-function getBrand(req, res) {
-    return res.sendStatus(SERVER_STATUSES.OK);
+async function getBrand(req, res) {
+    const brand_id = req.params.id;
+    const brand = await BRANDS_REPO.getBrand({ brand_id });
+
+    // Brand not found
+    if (!brand) {
+        return res.status(404).json({ message: BRAND_NOT_FOUND });
+    } 
+
+    return res.json(brand);
 }
 
 async function createBrand(req, res) {
     const errors = validationResult(req);
 
+    // Body error handling
     if (!errors.isEmpty()) {
         return res.status(SERVER_STATUSES.BAD_REQUEST).json(errors);
     }
@@ -33,22 +43,55 @@ async function createBrand(req, res) {
         brand_description: description ? description : null,
     }
 
+    // Add brand
     try {
         await BRANDS_REPO.createBrand(payload);
-        return res.json({
-            MESSAGE: BRAND_CREATED,
-            BRAND: payload,
-        })
+        return res.json({ message: BRAND_CREATED })
     } catch (error) {
         debug(error);
         return res.status(SERVER_STATUSES.SERVER_ERROR).json({ error })
     }
 }
 
-function updateBrand(req, res) {
+async function updateBrand(req, res) {
+    const errors = validationResult(req);
+
+    // Body Error handling
+    if (!errors.isEmpty()) {
+        return res.status(SERVER_STATUSES.BAD_REQUEST).json(errors);
+    }
+
+    const brand_id = req.params.id;
+    const condition = { brand_id };
+    const brand = await BRANDS_REPO.getBrand(condition);
+
+    // Brand not found
+    if (!brand) {
+        return res.status(404).json({ message: BRAND_NOT_FOUND });
+    }
+
+    const { name, description } = req.body;
+    const payload = {
+        brand_name: name,
+        brand_description: description ? description : null,
+    }
+
+    // Update Brand
+    await BRANDS_REPO.updateBrand(condition, payload);
     return res.sendStatus(SERVER_STATUSES.OK);
 }
 
-function deleteBrand(req, res) {
+async function deleteBrand(req, res) {
+    const brand_id = req.params.id;
+    const condition = { brand_id };
+    const brand = await BRANDS_REPO.getBrand(condition);
+
+    // Brand not found
+    if (!brand) {
+        return res.status(404).json({ message: BRAND_NOT_FOUND });
+    } 
+
+    // Delete brand
+    await BRANDS_REPO.deleteBrand(condition);
     return res.sendStatus(SERVER_STATUSES.OK);
 }
