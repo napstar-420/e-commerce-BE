@@ -18,5 +18,7 @@ module.exports = {
         FORBIDDEN: 403,
         NOT_FOUND: 404,
         SERVER_ERROR: 500,
-    }
+    },
+
+    ALLOWED_IMAGES_FORMAT: ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'],
 }

@@ -1,15 +1,18 @@
 const config = require('../config');
 const debug = require('debug')('myapp:products_controller');
 const PRODUCTS_REPO = require('../repositories/products');
+const PRODUCT_IMAGES_REPO = require('../repositories/productImages');
 const { validationResult } = require('express-validator');
-const { SERVER_STATUSES } = config;
+const { areImagesAllowed, uploadImage } = require('../utils');
 const {
     PRODUCT_FETCHED_SUCCESSFULLY,
     PRODUCT_CREATED_SUCCESSFULLY,
     PRODUCT_UPDATED_SUCCESSFULLY,
     PRODUCT_DELETED_SUCCESSFULLY,
     PRODUCT_NOT_FOUND,
+    INVALID_IMAGE_FORMAT,
 } = require('../lib/responses');
+const { SERVER_STATUSES } = config;
 
 module.exports = {
     getProduct,
@@ -49,6 +52,13 @@ async function createProduct(req, res) {
         return res.status(SERVER_STATUSES.BAD_REQUEST).json(errors);
     }
 
+    // Images checking
+    if (req.files?.length && !areImagesAllowed(req.files)) {
+        return res.status(SERVER_STATUSES.BAD_REQUEST).json({
+            errors: [{ msg: INVALID_IMAGE_FORMAT }]
+        });
+    }
+
     const {
         name,
         description,
@@ -68,8 +78,28 @@ async function createProduct(req, res) {
     }
 
     try {
-        await PRODUCTS_REPO.createProduct(payload);
-        return res.json({ message: PRODUCT_CREATED_SUCCESSFULLY });
+        const [productId] = await PRODUCTS_REPO.createProduct(payload);
+        const product = await PRODUCTS_REPO.getProduct({ product_id: productId });
+
+        // Upload images
+        if (req.files.length) {
+            const imageTasks = req.files.map(image => uploadImage(image, name));
+            const uploadImages = await Promise.all(imageTasks);
+            const payloadArr = uploadImages.map(image => {
+                return {
+                    ...image,
+                    product_id: productId
+                }
+            });
+            const dbTasks = payloadArr.map(payload => PRODUCT_IMAGES_REPO.addImage(payload))
+
+            await Promise.all(dbTasks);
+        }
+
+        return res.json({
+            message: PRODUCT_CREATED_SUCCESSFULLY,
+            data: product,
+        });
     } catch (error) {
         debug(error);
         return res.sendStatus(SERVER_STATUSES.SERVER_ERROR);
@@ -84,8 +114,15 @@ async function updateProduct(req, res) {
         return res.status(SERVER_STATUSES.BAD_REQUEST).json(errors);
     }
 
-    const product_id = req.params.id;
-    const condition = { product_id };
+    // Images checking
+    if (req.files?.length && !areImagesAllowed(req.files)) {
+        return res.status(SERVER_STATUSES.BAD_REQUEST).json({
+            errors: [{ msg: INVALID_IMAGE_FORMAT }]
+        });
+    }
+
+    const productId = req.params.id;
+    const condition = { product_id: productId };
     const {
         name,
         description,
@@ -105,11 +142,29 @@ async function updateProduct(req, res) {
     }
 
     try {
+        // Update product in DB
         await PRODUCTS_REPO.updateProduct(condition, payload);
+
+        // Upload images
+        if (req.files.length) {
+            const imageTasks = req.files.map(image => uploadImage(image, name));
+            const uploadImages = await Promise.all(imageTasks);
+            const payloadArr = uploadImages.map(image => {
+                return {
+                    ...image,
+                    product_id: productId
+                }
+            });
+            const dbTasks = payloadArr.map(payload => PRODUCT_IMAGES_REPO.addImage(payload))
+
+            await Promise.all(dbTasks);
+        }
+
         return res.json({ message: PRODUCT_UPDATED_SUCCESSFULLY });
     } catch (error) {
         debug(error);
-        return res.sendStatus(SERVER_STATUSES.SERVER_ERROR);
+        return res.status(SERVER_STATUSES.SERVER_ERROR)
+            .json({ message: error });
     }
 }
 

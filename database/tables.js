@@ -4,6 +4,7 @@ const tables = {
     brands: 'brands',
     categories: 'categories',
     products: 'products',
+    productImages: 'product_images',
     carts: 'carts',
     orders: 'orders',
     reviews: 'reviews'

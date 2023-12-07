@@ -68,6 +68,19 @@ CREATE TABLE products (
     INDEX idx_product_name (product_name) -- Index for product_name for quicker lookups
 );
 
+CREATE TABLE products_images (
+    image_id INT AUTO_INCREMENT PRIMARY KEY,
+    image_name VARCHAR(255) NOT NULL,
+    mimetype VARCHAR(50) NOT NULL,
+    image_url VARCHAR(255) NOT NULL,
+    thumb_url VARCHAR(255) NOT NULL,
+    medium_url VARCHAR(255) NOT NULL,
+    image_size VARCHAR(100),
+    delete_url VARCHAR(255),
+    product_id INT NOT NULL,
+    FOREIGN KEY (product_id) REFERENCES products(product_id)
+);
+
 -- Trigger for updating in_stock when quantity changes
 DELIMITER $$
 
