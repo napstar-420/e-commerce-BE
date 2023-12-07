@@ -3,8 +3,11 @@ const CATEGORY_REPO = require('../repositories/category');
 const debug = require('debug')('myapp:category_controller');
 const config = require('../config');
 const {
-    CATEGORY_CREATED,
     CATEGORY_NOT_FOUND,
+    CATEGORY_FETCHED_SUCCESSFULLY,
+    CATEGORY_CREATED_SUCCESSFULLY,
+    CATEGORY_UPDATED_SUCCESSFULLY,
+    CATEGORY_DELETED_SUCCESSFULLY,
 } = require('../lib/responses');
 
 const { SERVER_STATUSES } = config;
@@ -25,7 +28,10 @@ async function getCategory(req, res) {
         return res.status(404).json({ message: CATEGORY_NOT_FOUND });
     } 
 
-    return res.json(category);
+    return res.json({
+        message: CATEGORY_FETCHED_SUCCESSFULLY,
+        data: category
+    });
 }
 
 async function createCategory(req, res) {
@@ -43,7 +49,7 @@ async function createCategory(req, res) {
     // Add Category
     try {
         await CATEGORY_REPO.createCategory(payload);
-        return res.json({ message: CATEGORY_CREATED })
+        return res.json({ message: CATEGORY_CREATED_SUCCESSFULLY })
     } catch (error) {
         debug(error);
         return res.status(SERVER_STATUSES.SERVER_ERROR).json({ error })
@@ -72,7 +78,7 @@ async function updateCategory(req, res) {
 
     // Update Category
     await CATEGORY_REPO.updateCategory(condition, payload);
-    return res.sendStatus(SERVER_STATUSES.OK);
+    return res.json({ message: CATEGORY_UPDATED_SUCCESSFULLY });
 }
 
 async function deleteCategory(req, res) {
@@ -87,5 +93,5 @@ async function deleteCategory(req, res) {
 
     // Delete Category
     await CATEGORY_REPO.deleteCategory(condition);
-    return res.sendStatus(SERVER_STATUSES.OK);
+    return res.json({ message: CATEGORY_DELETED_SUCCESSFULLY });
 }

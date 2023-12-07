@@ -1,4 +1,4 @@
-const debug = require('debug')('myapp:user_repo');
+const debug = require('debug')('myapp:brands_repo');
 const { first } = require('lodash');
 const db = require('../database');
 const { brands } = require('../database/tables');

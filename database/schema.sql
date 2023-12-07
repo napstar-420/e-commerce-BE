@@ -55,14 +55,34 @@ CREATE TABLE categories (
 CREATE TABLE products (
     product_id INT AUTO_INCREMENT PRIMARY KEY,
     product_name VARCHAR(255) NOT NULL,
-    description VARCHAR(255),
-    price DECIMAL(10, 2) NOT NULL,
+    product_description VARCHAR(255),
+    product_price DECIMAL(10, 2) NOT NULL,
+    product_quantity INT NOT NULL DEFAULT 0,
+    in_stock INT NOT NULL DEFAULT 0,
     brand_id INT,
     category_id INT,
+    date_created DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    date_updated DATETIME DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (brand_id) REFERENCES brands(brand_id),
     FOREIGN KEY (category_id) REFERENCES categories(category_id),
     INDEX idx_product_name (product_name) -- Index for product_name for quicker lookups
 );
+
+-- Trigger for updating in_stock when quantity changes
+DELIMITER $$
+
+CREATE TRIGGER before_update_in_quantity
+BEFORE UPDATE ON products
+FOR EACH ROW
+BEGIN
+    IF NEW.product_quantity = 0 THEN
+        SET NEW.in_stock = 0;
+    ELSE
+        SET NEW.in_stock = 1;
+    END IF;
+END $$
+
+DELIMITER ;
 
 -- Cart table for storing customer's shopping cart items
 CREATE TABLE carts (
@@ -70,7 +90,8 @@ CREATE TABLE carts (
     product_id INT NOT NULL,
     customer_id INT NOT NULL,
     quantity INT NOT NULL DEFAULT 1,
-    date_created DATETIME DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+    date_created DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    date_updated DATETIME DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (product_id) REFERENCES products(product_id),
     FOREIGN KEY (customer_id) REFERENCES customers(customer_id),
     INDEX idx_customer_id (customer_id) -- Index for customer_id for quicker lookups
@@ -101,6 +122,10 @@ FOR EACH ROW
 BEGIN
     SET NEW.quantity = (SELECT quantity FROM carts WHERE customer_id = NEW.customer_id AND product_id = NEW.product_id);
     SET NEW.total_amount = (SELECT price * NEW.quantity FROM products WHERE product_id = NEW.product_id);
+    -- update product_quantity in products
+    UPDATE products
+        SET product_quantity = product_quantity - NEW.quantity
+    WHERE product_id = NEW.product_id;
 END $$
 
 -- Trigger for updating total_orders in customers after an order is inserted

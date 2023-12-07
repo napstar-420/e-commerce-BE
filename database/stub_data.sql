@@ -4,8 +4,8 @@ USE e_commerce;
 -- Insert dummy data into customers table
 INSERT INTO customers (first_name, last_name, email, phone_number, address, city, state, zip_code, country)
 VALUES
-    ('John', 'Doe', 'john.doe@example.com', '123-456-7890', '123 Main St', 'Anytown', 'CA', '12345', 'USA'),
-    ('Alice', 'Smith', 'alice.smith@example.com', '987-654-3210', '456 Oak St', 'Sometown', 'NY', '54321', 'USA');
+    ('John', 'Doe', 'john.doe@example.com', '123-456-7890', '123 Main St', 'Cityville', 'Stateville', '12345', 'Countryland'),
+    ('Jane', 'Smith', 'jane.smith@example.com', '987-654-3210', '456 Oak St', 'Townsville', 'Stateville', '54321', 'Countryland');
 
 -- Insert dummy data into users table
 INSERT INTO users (full_name, email, password, username, role)
@@ -26,27 +26,25 @@ VALUES
     ('CategoryB');
 
 -- Insert dummy data into products table
-INSERT INTO products (product_name, description, price, brand_id, category_id)
+INSERT INTO products (product_name, description, price, product_quantity, brand_id, category_id)
 VALUES
-    ('ProductA1', 'Description for ProductA1', 19.99, 1, 1),
-    ('ProductA2', 'Description for ProductA2', 29.99, 1, 2),
-    ('ProductB1', 'Description for ProductB1', 24.99, 2, 1),
-    ('ProductB2', 'Description for ProductB2', 34.99, 2, 2);
+    ('ProductA', 'Description for ProductA', 19.99, 100, 1, 1),
+    ('ProductB', 'Description for ProductB', 29.99, 50, 2, 1);
 
 -- Insert dummy data into carts table
 INSERT INTO carts (product_id, customer_id, quantity)
 VALUES
-    (1, 1, 2), -- John added 2 ProductA1 to his cart
-    (3, 2, 1); -- Alice added 1 ProductB1 to her cart
+    (1, 1, 2),
+    (2, 2, 1);
 
 -- Insert dummy data into orders table
 INSERT INTO orders (product_id, customer_id, quantity, total_amount, order_status)
 VALUES
-    (1, 1, 2, 39.98, 'shipped'), -- John ordered 2 ProductA1
-    (3, 2, 1, 24.99, 'delivered'); -- Alice ordered 1 ProductB1
+    (1, 1, 2, 39.98, 'pending'),
+    (2, 2, 1, 29.99, 'shipped');
 
 -- Insert dummy data into reviews table
 INSERT INTO reviews (review, product_id, customer_id)
 VALUES
     ('Great product!', 1, 1),
-    ('Excellent service!', 3, 2);
+    ('Not satisfied with the quality.', 2, 2);

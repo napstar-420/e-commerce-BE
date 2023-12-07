@@ -1,4 +1,4 @@
-const debug = require('debug')('myapp:user_repo');
+const debug = require('debug')('myapp:category_repo');
 const { first } = require('lodash');
 const db = require('../database');
 const { categories } = require('../database/tables');

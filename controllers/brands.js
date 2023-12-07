@@ -3,8 +3,11 @@ const BRANDS_REPO = require('../repositories/brands');
 const debug = require('debug')('myapp:brands_controller');
 const config = require('../config');
 const {
-    BRAND_CREATED,
     BRAND_NOT_FOUND,
+    BRAND_FETCHED_SUCCESSFULLY,
+    BRAND_CREATED_SUCCESSFULLY,
+    BRAND_UPDATED_SUCCESSFULLY,
+    BRAND_DELETED_SUCCESSFULLY,
 } = require('../lib/responses');
 
 const { SERVER_STATUSES } = config;
@@ -25,7 +28,10 @@ async function getBrand(req, res) {
         return res.status(404).json({ message: BRAND_NOT_FOUND });
     } 
 
-    return res.json(brand);
+    return res.json({
+        message: BRAND_FETCHED_SUCCESSFULLY,
+        data: brand,
+    });
 }
 
 async function createBrand(req, res) {
@@ -46,7 +52,7 @@ async function createBrand(req, res) {
     // Add brand
     try {
         await BRANDS_REPO.createBrand(payload);
-        return res.json({ message: BRAND_CREATED })
+        return res.json({ message: BRAND_CREATED_SUCCESSFULLY })
     } catch (error) {
         debug(error);
         return res.status(SERVER_STATUSES.SERVER_ERROR).json({ error })
@@ -78,7 +84,7 @@ async function updateBrand(req, res) {
 
     // Update Brand
     await BRANDS_REPO.updateBrand(condition, payload);
-    return res.sendStatus(SERVER_STATUSES.OK);
+    return res.json({ message: BRAND_UPDATED_SUCCESSFULLY });
 }
 
 async function deleteBrand(req, res) {
@@ -93,5 +99,5 @@ async function deleteBrand(req, res) {
 
     // Delete brand
     await BRANDS_REPO.deleteBrand(condition);
-    return res.sendStatus(SERVER_STATUSES.OK);
+    return res.json({ message: BRAND_DELETED_SUCCESSFULLY });
 }
