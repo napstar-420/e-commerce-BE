@@ -7,7 +7,8 @@ module.exports = {
     getProduct,
     createProduct,
     updateProduct,
-    deleteProduct
+    deleteProduct,
+    getImsProducts
 }
 
 async function getProduct(condition) {
@@ -41,6 +42,15 @@ async function updateProduct(condition, payload) {
 async function deleteProduct(condition) {
     try {
         return await db(products).where(condition).delete();
+    } catch (error) {
+        debug(error);
+        throw new Error('Error while deleting product');
+    }
+}
+
+async function getImsProducts() {
+    try {
+        return await db(products).select().limit(10);
     } catch (error) {
         debug(error);
         throw new Error('Error while deleting product');

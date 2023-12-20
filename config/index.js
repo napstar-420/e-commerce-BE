@@ -21,4 +21,5 @@ module.exports = {
     },
 
     ALLOWED_IMAGES_FORMAT: ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'],
+    allowedOrigins: ['http://localhost:5173', undefined],
 }

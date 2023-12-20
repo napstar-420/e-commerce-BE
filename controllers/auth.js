@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const config = require('../config');
 const { USER_CREATED } = require('../lib/responses');
+const { omit } = require('lodash');
 const { SERVER_STATUSES } = config;
 
 async function userSignup(req, res) {
@@ -53,7 +54,8 @@ function userLogin(req, res) {
     }
 
     // Create and Sign a JWT
-    const payload = { ...req.user };
+    const user = omit(req.user, ['password']);
+    const payload = { ...user };
 
     const accessToken = jwt.sign(
         payload,
@@ -61,7 +63,7 @@ function userLogin(req, res) {
         { expiresIn: '8h' },
     );
 
-    return res.json({ accessToken });
+    return res.json({ accessToken, user });
 }
 
 module.exports = {

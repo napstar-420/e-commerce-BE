@@ -4,8 +4,10 @@ const logger = require('morgan')('dev');
 const debug = require('debug')('myapp:server');
 const cookieParser = require('cookie-parser');
 const session= require('express-session');
+const cors = require('cors');
 const { v4: uuidv4 } = require('uuid');
 const router = require('./routes/router');
+const corsOptions = require('./config/corsOptions');
 
 /**
  * Creating App
@@ -18,6 +20,7 @@ const app = express();
  */
 
 app.use(logger);
+app.use(cors(corsOptions))
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());
