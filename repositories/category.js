@@ -5,6 +5,7 @@ const { categories } = require('../database/tables');
 
 module.exports = {
     getCategory,
+    getCategories,
     createCategory,
     updateCategory,
     deleteCategory
@@ -17,6 +18,19 @@ async function getCategory(condition) {
     } catch (error) {
         debug(error);
         throw new Error('Error while checking if category exists');
+    }
+}
+
+async function getCategories(name) {
+    try {
+        if (name) {
+            return await db(categories).whereILike('category_name', `%${name}%`).select();
+        }
+
+        return await db(category).select();
+    } catch (error) {
+        debug(error);
+        throw new Error('Error while getting category');
     }
 }
 

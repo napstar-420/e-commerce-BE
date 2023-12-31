@@ -1,6 +1,6 @@
 const config = require('../config');
 const debug = require('debug')('myapp:products_controller');
-const PRODUCTS_REPO = require('../repositories/products');
+const PRODUCTS_REPO = require('../repositories/product');
 const { PRODUCT_NOT_FOUND } = require('../lib/responses');
 const { SERVER_STATUSES } = config;
 

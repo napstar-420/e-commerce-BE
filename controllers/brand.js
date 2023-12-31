@@ -1,5 +1,5 @@
 const { validationResult } = require('express-validator');
-const BRANDS_REPO = require('../repositories/brands');
+const BRANDS_REPO = require('../repositories/brand');
 const debug = require('debug')('myapp:brands_controller');
 const config = require('../config');
 const {

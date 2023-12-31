@@ -1,5 +1,5 @@
 const { body, query } = require("express-validator");
-const BRANDS_REPO = require('../repositories/brands');
+const BRANDS_REPO = require('../repositories/brand');
 const {
     BRAND_NAME_IS_REQUIRED,
     BRAND_NAME_LENGTH_ERROR,

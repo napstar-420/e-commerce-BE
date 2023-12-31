@@ -1,4 +1,4 @@
-const BRANDS_REPO = require('../../repositories/brands');
+const BRANDS_REPO = require('../../repositories/brand');
 
 module.exports = {
     getBrands

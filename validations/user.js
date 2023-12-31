@@ -1,7 +1,7 @@
 const { body } = require('express-validator');
 const { first, isEmpty } = require('lodash');
 const bcrypt = require('bcryptjs');
-const USERS_REPO = require('../repositories/users');
+const USERS_REPO = require('../repositories/user');
 const config = require('../config');
 const {
     EMAIL_IS_REQUIRED,

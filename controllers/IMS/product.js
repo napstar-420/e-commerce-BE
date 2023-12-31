@@ -1,6 +1,6 @@
 const config = require('../../config');
 const debug = require('debug')('myapp:products_controller');
-const PRODUCTS_REPO = require('../../repositories/products');
+const PRODUCTS_REPO = require('../../repositories/product');
 const PRODUCT_IMAGES_REPO = require('../../repositories/productImages');
 const { validationResult } = require('express-validator');
 const { areImagesAllowed, uploadImage } = require('../../utils');
