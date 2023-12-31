@@ -1,16 +1,16 @@
-const config = require('../config');
+const config = require('../../config');
 const debug = require('debug')('myapp:products_controller');
-const PRODUCTS_REPO = require('../repositories/products');
-const PRODUCT_IMAGES_REPO = require('../repositories/productImages');
+const PRODUCTS_REPO = require('../../repositories/products');
+const PRODUCT_IMAGES_REPO = require('../../repositories/productImages');
 const { validationResult } = require('express-validator');
-const { areImagesAllowed, uploadImage } = require('../utils');
+const { areImagesAllowed, uploadImage } = require('../../utils');
 const {
     PRODUCT_CREATED_SUCCESSFULLY,
     PRODUCT_UPDATED_SUCCESSFULLY,
     PRODUCT_DELETED_SUCCESSFULLY,
     PRODUCT_NOT_FOUND,
     INVALID_IMAGE_FORMAT,
-} = require('../lib/responses');
+} = require('../../lib/responses');
 const { SERVER_STATUSES } = config;
 
 module.exports = {

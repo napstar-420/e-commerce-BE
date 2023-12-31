@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const verifyJWT = require('../middlewares/verifyJWT');
 const verifyUser = require('../middlewares/verifyUser');
-const controller = require('../controllers/brands');
+const controller = require('../controllers/brand');
 const { createBrandValidations } = require('../validations/brands');
 
 router.get('/:id', controller.getBrand);

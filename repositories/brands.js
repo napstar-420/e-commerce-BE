@@ -5,6 +5,7 @@ const { brands } = require('../database/tables');
 
 module.exports = {
     getBrand,
+    getBrands,
     createBrand,
     updateBrand,
     deleteBrand,
@@ -16,7 +17,20 @@ async function getBrand(condition) {
         return first(data);
     } catch (error) {
         debug(error);
-        throw new Error('Error while checking if brand exists');
+        throw new Error('Error while getting brand');
+    }
+}
+
+async function getBrands(name) {
+    try {
+        if (name) {
+            return await db(brands).whereILike('brand_name', `%${name}%`).select();
+        }
+
+        return await db(brands).select();
+    } catch (error) {
+        debug(error);
+        throw new Error('Error while getting brands');
     }
 }
 

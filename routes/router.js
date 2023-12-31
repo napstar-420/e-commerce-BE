@@ -5,7 +5,8 @@ const authRouter = require('./auth');
 const brandRouter = require('./brands');
 const categoryRouter = require('./category');
 const productRouter = require('./products');
-const imsProductRouter = require('./imsProducts');
+const imsProductRouter = require('./IMS/products');
+const imsBrandRouter = require('./IMS/brand');
 
 // Customer Routes
 router.use('/auth', authRouter);
@@ -18,5 +19,6 @@ router.use(verifyJWT);
 router.use(verifyUser);
 
 router.use('/ims/products', imsProductRouter);
+router.use('/ims/brands', imsBrandRouter);
 
 module.exports = router;

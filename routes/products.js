@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const controller = require('../controllers/products');
+const controller = require('../controllers/product');
 
 router.get('/:id', controller.getProduct);
 

@@ -1,4 +1,4 @@
-const { body } = require("express-validator");
+const { body, query } = require("express-validator");
 const BRANDS_REPO = require('../repositories/brands');
 const {
     BRAND_NAME_IS_REQUIRED,
@@ -34,6 +34,16 @@ const createBrandValidations = [
         .withMessage(BRAND_DESC_LENGTH_ERROR),
 ];
 
+const getBrandsValidations = [
+    query('name')
+        .optional()
+        .trim()
+        .isString()
+        .withMessage()
+        .isLength({ max: 100 })
+]
+
 module.exports = {
-    createBrandValidations
+    createBrandValidations,
+    getBrandsValidations
 }
