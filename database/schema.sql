@@ -134,7 +134,7 @@ BEFORE INSERT ON orders
 FOR EACH ROW
 BEGIN
     SET NEW.quantity = (SELECT quantity FROM carts WHERE customer_id = NEW.customer_id AND product_id = NEW.product_id);
-    SET NEW.total_amount = (SELECT price * NEW.quantity FROM products WHERE product_id = NEW.product_id);
+    SET NEW.total_amount = (SELECT product_price * NEW.quantity FROM products WHERE product_id = NEW.product_id);
     -- update product_quantity in products
     UPDATE products
         SET product_quantity = product_quantity - NEW.quantity

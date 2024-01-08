@@ -10,8 +10,8 @@ VALUES
 -- Insert dummy data into users table
 INSERT INTO users (full_name, email, password, username, role)
 VALUES
-    ('Admin User', 'admin@example.com', 'hashed_password', 'admin_user', 'admin'),
-    ('Employee User', 'employee@example.com', 'hashed_password', 'employee_user', 'employee');
+    ('Admin User', 'admin@example.com', '$2a$10$MtewomqNhwCIQ0/61mrEy.QIK7rLC7BaS3gks3hxu1J8Bz8urdv9W', 'admin_user', 'admin'),
+    ('Employee User', 'employee@example.com', '$2a$10$MtewomqNhwCIQ0/61mrEy.QIK7rLC7BaS3gks3hxu1J8Bz8urdv9W', 'employee_user', 'employee');
 
 -- Insert dummy data into brands table
 INSERT INTO brands (brand_name, brand_description)
@@ -26,7 +26,7 @@ VALUES
     ('CategoryB');
 
 -- Insert dummy data into products table
-INSERT INTO products (product_name, description, price, product_quantity, brand_id, category_id)
+INSERT INTO products (product_name, product_description, product_price, product_quantity, brand_id, category_id)
 VALUES
     ('ProductA', 'Description for ProductA', 19.99, 100, 1, 1),
     ('ProductB', 'Description for ProductB', 29.99, 50, 2, 1);

@@ -4,6 +4,7 @@ const verifyUser = require('../middlewares/verifyUser');
 const controller = require('../controllers/brand');
 const { createBrandValidations } = require('../validations/brands');
 
+router.get('/', controller.getBrands);
 router.get('/:id', controller.getBrand);
 
 // Below routes require employee authentication

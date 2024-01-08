@@ -34,16 +34,6 @@ const createBrandValidations = [
         .withMessage(BRAND_DESC_LENGTH_ERROR),
 ];
 
-const getBrandsValidations = [
-    query('name')
-        .optional()
-        .trim()
-        .isString()
-        .withMessage()
-        .isLength({ max: 100 })
-]
-
 module.exports = {
     createBrandValidations,
-    getBrandsValidations
 }

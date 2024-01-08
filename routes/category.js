@@ -4,6 +4,7 @@ const verifyUser = require('../middlewares/verifyUser');
 const controller = require('../controllers/category');
 const { createCategoryValidations } = require('../validations/category');
 
+router.get('/', controller.getCategories);
 router.get('/:id', controller.getCategory);
 
 // Below routes require employee authentication

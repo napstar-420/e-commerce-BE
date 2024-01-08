@@ -21,10 +21,10 @@ async function getBrand(condition) {
     }
 }
 
-async function getBrands(name) {
+async function getBrands(q) {
     try {
-        if (name) {
-            return await db(brands).whereILike('brand_name', `%${name}%`).select();
+        if (q) {
+            return await db(brands).whereILike('brand_name', `%${q}%`).select();
         }
 
         return await db(brands).select();

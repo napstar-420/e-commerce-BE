@@ -21,10 +21,10 @@ async function getCategory(condition) {
     }
 }
 
-async function getCategories(name) {
+async function getCategories(q) {
     try {
-        if (name) {
-            return await db(categories).whereILike('category_name', `%${name}%`).select();
+        if (q) {
+            return await db(categories).whereILike('category_name', `%${q}%`).select();
         }
 
         return await db(category).select();

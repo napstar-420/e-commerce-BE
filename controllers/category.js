@@ -14,6 +14,7 @@ const { SERVER_STATUSES } = config;
 
 module.exports = {
     getCategory,
+    getCategories,
     createCategory,
     updateCategory,
     deleteCategory
@@ -32,6 +33,18 @@ async function getCategory(req, res) {
         message: CATEGORY_FETCHED_SUCCESSFULLY,
         data: category
     });
+}
+
+async function getCategories(req, res) {
+    const q = req.query?.q;
+
+    try {
+        const categories = await CATEGORY_REPO.getCategories(q);
+        return res.json(categories);
+    } catch (error) {
+        debug(error);
+        res.sendStatus(SERVER_STATUSES.SERVER_ERROR);
+    }
 }
 
 async function createCategory(req, res) {

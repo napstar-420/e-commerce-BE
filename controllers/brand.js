@@ -14,10 +14,23 @@ const { SERVER_STATUSES } = config;
 
 module.exports = {
     getBrand,
+    getBrands,
     createBrand,
     updateBrand,
     deleteBrand
 }
+
+async function getBrands(req, res) {
+    const q = req.query?.q;
+  
+    try {
+      const brands = await BRANDS_REPO.getBrands(q);
+      return res.json(brands);
+    } catch (error) {
+      debug(error);
+      res.sendStatus(SERVER_STATUSES.SERVER_ERROR);
+    }
+  }
 
 async function getBrand(req, res) {
     const brand_id = req.params.id;
